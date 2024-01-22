@@ -183,51 +183,51 @@ Vue.config.productionTip = false
 Vue.use(mavonEditor)
 // 一次性解决时区和日期格式问题
 import moment from 'moment'
-Date.prototype.toISOString = function(){
-    return moment(this).format('YYYY-MM-DD HH:mm:ss')
+Date.prototype.toISOString = function () {
+  return moment(this).format('YYYY-MM-DD HH:mm:ss')
 }
 router.beforeEach((to, from, next) => {
-      if (store.state.username && to.path.startsWith('/admin')) {
-        initAdminMenu(router, store)
-      }
-      if (store.state.username && to.path.startsWith('/login')) {
-        next({
-          name: 'Dashboard'
-        })
-      }
-      // 如果前端没有登录信息则直接拦截，如果有则判断后端是否正常登录（防止构造参数绕过）
-      if (to.meta.requireAuth) {
-        if (store.state.username) {
-          axios.get('/authentication').then(resp => {
-            if (resp) {
-              next()
-            }
-          })
-        } else {
-          next({
-            path: 'login',
-            query: {redirect: to.fullPath}
-          })
+  if (store.state.username && to.path.startsWith('/admin')) {
+    initAdminMenu(router, store)
+  }
+  if (store.state.username && to.path.startsWith('/login')) {
+    next({
+      name: 'Dashboard'
+    })
+  }
+  // 如果前端没有登录信息则直接拦截，如果有则判断后端是否正常登录（防止构造参数绕过）
+  if (to.meta.requireAuth) {
+    if (store.state.username) {
+      axios.get('/authentication').then(resp => {
+        if (resp) {
+          next()
         }
-      } else {
-        next()
-      }
+      })
+    } else {
+      next({
+        path: 'login',
+        query: { redirect: to.fullPath }
+      })
     }
+  } else {
+    next()
+  }
+}
 )
 
 // http response 拦截器
 axios.interceptors.response.use(
-    response => {
-      return response
-    },
-    error => {
-      if (error) {
-        store.commit('logout')
-        router.replace('/login')
-      }
-      // 返回接口返回的错误信息
-      return Promise.reject(error)
-    })
+  response => {
+    return response
+  },
+  error => {
+    if (error) {
+      store.commit('logout')
+      router.replace('/login')
+    }
+    // 返回接口返回的错误信息
+    return Promise.reject(error)
+  })
 
 const initAdminMenu = (router, store) => {
   // 防止重复触发加载菜单操作
@@ -241,7 +241,11 @@ const initAdminMenu = (router, store) => {
       for (let i = 0; i < fmtRoutes.length; i += 1) {
         const element = fmtRoutes[i]
         router.addRoute(element); // 会有告警
-    }
+      }
+      router.addRoute({
+        path: '*',
+        component: () => import('./components/pages/Error404')
+      }); // 会有告警
       console.log(router)
       store.commit('initAdminMenu', fmtRoutes)
       console.log(store.state.adminMenus)
@@ -280,6 +284,6 @@ new Vue({
   render: h => h(App),
   router,
   store,
-  components: {App},
+  components: { App },
   template: '<App/>'
 })

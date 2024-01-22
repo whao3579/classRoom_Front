@@ -7,8 +7,8 @@ import ClassroomIndex from "@/components/classRoom/ClassroomIndex";
 import PersonalIndex from "@/components/personal/PersonalIndex";
 import NoticeIndex from "@/components/notice/NoticeIndex";
 import Register from "@/components/Register";
-// import AdminIndex from "@/components/admin/AdminIndex";
-// import DashBoard from "@/components/admin/dashboard/admin/index"
+import AdminIndex from "@/components/admin/AdminIndex";
+import DashBoard from "@/components/admin/dashboard/admin/index"
 import Editor from "@/components/admin/content/ArticleEditor"
 import Articles from '../components/jotter/Articles'
 import ArticleDetails from '@/components/jotter/ArticleDetails'
@@ -104,28 +104,28 @@ const routes = [
         // which is lazy-loaded when the route is visited.
         component: () => import(/* webpackChunkName: "about" */ '../components/home/About.vue')
     },
-    // {
-    //     path: '/admin',
-    //     name: 'Admin',
-    //     component: AdminIndex,
-    //     meta: {
-    //         requireAuth: true
-    //     },
-    //     children: [
-    //         {
-    //             path: '/admin/dashboard',
-    //             name: 'Dashboard',
-    //             component: DashBoard,
-    //             meta: {
-    //                 requireAuth: true
-    //             }
-    //         }
-    //     ]
-    // },
     {
-        path: '*',
-        component: () => import('../components/pages/Error404')
-    }
+        path: '/admin',
+        name: 'Admin',
+        component: AdminIndex,
+        meta: {
+            requireAuth: true
+        },
+        children: [
+            {
+                path: '/admin/dashboard',
+                name: 'Dashboard',
+                component: DashBoard,
+                meta: {
+                    requireAuth: true
+                }
+            }
+        ]
+    },
+    // {
+    //     path: '*',
+    //     component: () => import('../components/pages/Error404')
+    // }
 
 ];
 
